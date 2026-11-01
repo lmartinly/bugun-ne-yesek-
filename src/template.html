@@ -1,0 +1,525 @@
+<title>2027 Aile Tarif Rehberi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Düzen: üstte başlık + kontrol paneli, altında tarif kartları; açılan kart tüm satırı kaplar (malzeme | yapılış) */
+:root {
+  --bg: #F1F4EE;
+  --surface: #FFFFFF;
+  --surface2: #E6ECE2;
+  --fg: #16231C;
+  --muted: #526158;
+  --line: #D3DCD0;
+  --accent: #1E6A54;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #D9EAE2;
+  --star: #A9690A;
+  --bad: #B03A2A;
+  --bad-soft: #F6DDD8;
+  --m-protein: #1E6A54;
+  --m-carb: #3F6DB0;
+  --m-fat: #C0841A;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1612; --surface: #16201A; --surface2: #1F2B24; --fg: #E6EEE9; --muted: #9DB0A5;
+    --line: #2A3A30; --accent: #62C4A3; --accent-ink: #0A1A13; --accent-soft: #1B3329;
+    --star: #E5B545; --bad: #F08B79; --bad-soft: #3A1F1A;
+    --m-protein: #62C4A3; --m-carb: #7DA6E6; --m-fat: #E2A94C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1612; --surface: #16201A; --surface2: #1F2B24; --fg: #E6EEE9; --muted: #9DB0A5;
+  --line: #2A3A30; --accent: #62C4A3; --accent-ink: #0A1A13; --accent-soft: #1B3329;
+  --star: #E5B545; --bad: #F08B79; --bad-soft: #3A1F1A;
+  --m-protein: #62C4A3; --m-carb: #7DA6E6; --m-fat: #E2A94C;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+  padding-block: 32px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* başlık */
+.head { display: flex; flex-direction: column; gap: 12px; }
+.head h1 { font-size: clamp(2rem, 5.5vw, 3.4rem); font-weight: 800; letter-spacing: -0.02em; }
+.head p { margin: 0; max-width: 62ch; color: var(--muted); font-size: 1.05rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.9rem; color: var(--muted); align-items: center; }
+.legend b { color: var(--fg); font-weight: 600; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: baseline; }
+.star { color: var(--star); }
+
+/* kontrol paneli */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+.row { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab { border: 1px solid var(--line); background: transparent; padding: 8px 14px; border-radius: 999px; font-weight: 600; font-size: 0.95rem; }
+.tab[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tab small { opacity: 0.75; font-weight: 500; margin-left: 4px; }
+.field { display: flex; align-items: center; gap: 10px; }
+.field label, .lbl { font-weight: 600; font-size: 0.9rem; color: var(--muted); }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.stepper button { width: 38px; height: 38px; border: 0; background: var(--surface2); font-size: 1.2rem; line-height: 1; }
+.stepper button:hover { background: var(--accent-soft); }
+.stepper output { min-width: 44px; text-align: center; font-weight: 700; }
+.search { flex: 1 1 240px; min-width: 0; }
+.search input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); font: inherit; }
+.toggle { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95rem; }
+.toggle input { width: 18px; height: 18px; accent-color: var(--accent); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 8px 12px; font-size: 0.9rem; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+.chipgroups { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px 24px; }
+.chipgroup { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: transparent; padding: 5px 11px; border-radius: 8px; font-size: 0.88rem; font-weight: 500; }
+.chip:hover { border-color: var(--accent); }
+.chip[data-s="in"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.chip[data-s="out"] { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); text-decoration: line-through; font-weight: 600; }
+.hint { font-size: 0.85rem; color: var(--muted); margin: 0; }
+.linkbtn { border: 0; background: transparent; color: var(--accent); font-weight: 600; text-decoration: underline; padding: 4px; }
+.count { font-weight: 600; color: var(--muted); }
+
+/* kartlar */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 16px; align-items: start; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card.open { grid-column: 1 / -1; }
+.card-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--surface2); padding: 3px 8px; border-radius: 6px; }
+.badge { white-space: nowrap; font-weight: 700; font-size: 0.9rem; color: var(--star); display: inline-flex; gap: 4px; align-items: center; }
+.card h3 { font-size: 1.3rem; font-weight: 700; }
+.meta { margin: 0; color: var(--muted); font-size: 0.92rem; }
+.macros { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: 8px; }
+.macro { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.macro b { font-family: var(--font-display); font-size: 1.45rem; font-weight: 700; line-height: 1.1; }
+.macro b i { font-style: normal; font-size: 0.8rem; font-weight: 500; color: var(--muted); margin-left: 2px; }
+.macro span { font-size: 0.8rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
+.bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--surface2); }
+.bar > span { display: block; height: 100%; }
+.ratio { margin: 0; font-size: 0.88rem; color: var(--muted); }
+.ratio b { color: var(--fg); }
+.portion { margin: 0; font-size: 0.92rem; background: var(--surface2); border-radius: 10px; padding: 10px 12px; }
+.portion b { font-weight: 700; }
+.open-btn { align-self: flex-start; border: 1px solid var(--accent); color: var(--accent); background: transparent; border-radius: 10px; padding: 8px 14px; font-weight: 700; }
+.open-btn:hover { background: var(--accent-soft); }
+.detail { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px 36px; border-top: 1px solid var(--line); padding-top: 18px; }
+.detail h4 { font-family: var(--font-display); font-size: 1.05rem; margin: 0 0 10px; }
+.servbar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin-bottom: 14px; }
+.ing { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.ing li { padding: 7px 0; border-bottom: 1px dashed var(--line); display: flex; gap: 8px; }
+.ing li.hit { background: var(--accent-soft); margin-inline: -8px; padding-inline: 8px; border-radius: 6px; border-bottom-color: transparent; }
+.ing .q { font-weight: 700; min-width: 4.5ch; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.steps { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 10px; }
+.notes { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.note { margin: 0; font-size: 0.93rem; padding: 10px 12px; border-radius: 10px; background: var(--surface2); }
+.note b { display: block; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.empty { text-align: center; padding: 40px 16px; background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; }
+.pic { border-radius: 10px; overflow: hidden; line-height: 0; }
+.card.open .pic { max-width: 460px; }
+.pic svg { width: 100%; height: auto; display: block; }
+.cui { font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); opacity: 0.85; margin-left: 6px; }
+.cta { border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 700; padding: 12px 22px; border-radius: 12px; font-size: 1rem; }
+.cta:hover { filter: brightness(1.08); }
+.cta:disabled { opacity: 0.6; cursor: default; }
+.game h2 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.01em; }
+.game-result { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 20px; align-items: center; background: var(--surface2); border-radius: 14px; padding: 16px; }
+.game-result h3 { font-size: 1.5rem; margin: 6px 0 4px; }
+.game-result .meta { margin-bottom: 10px; }
+.game-result .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.game-result .miss { font-size: 0.92rem; margin: 8px 0 0; color: var(--bad); font-weight: 600; }
+.game-result .ok { font-size: 0.92rem; margin: 8px 0 0; color: var(--accent); font-weight: 600; }
+.game-result.rolling h3 { opacity: 0.55; }
+.foot { font-size: 0.85rem; color: var(--muted); max-width: 80ch; }
+@media (max-width: 720px) {
+  .detail { grid-template-columns: minmax(0, 1fr); }
+  .game-result { grid-template-columns: minmax(0, 1fr); }
+  .macro b { font-size: 1.25rem; }
+  .panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bar > span { transition: width .25s ease; }
+}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <h1>2027 Aile Tarif Rehberi</h1>
+    <p>Hepsi yüksek protein, düşük kalori ve ortak sofraya uygun. Tarifler 3 kişilik yazıldı, kişi sayısını değiştirdikçe malzemeler güncellenir.</p>
+    <div class="legend" id="legend"></div>
+    <p class="hint"><a href="#game" style="color:var(--accent);font-weight:600">Ne pişireceğine karar veremedin mi? Rastgele yemek oyununa git ↓</a></p>
+  </header>
+
+  <section class="panel" aria-label="Filtreler">
+    <div class="row">
+      <div class="tabs" id="tabs" role="group" aria-label="Bölüm"></div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <span class="lbl" id="gl">Kişi sayısı</span>
+        <div class="stepper" role="group" aria-labelledby="gl">
+          <button type="button" id="g-minus" aria-label="Kişi sayısını azalt">−</button>
+          <output id="g-val" class="num">3</output>
+          <button type="button" id="g-plus" aria-label="Kişi sayısını artır">+</button>
+        </div>
+      </div>
+      <div class="search">
+        <input id="q" type="search" placeholder="Malzeme veya tarif ara (ör. lor, ciğer, nori)" aria-label="Malzeme veya tarif ara" autocomplete="off">
+      </div>
+      <label class="toggle"><input type="checkbox" id="starOnly"> Sadece ★ olanlar</label>
+    </div>
+    <div class="chipgroups" id="chipgroups"></div>
+    <div class="row">
+      <span class="lbl">Seçtiğim malzemeler</span>
+      <div class="seg" id="mode" role="group" aria-label="Eşleşme türü">
+        <button type="button" data-mode="all" aria-pressed="true">Hepsi olsun</button>
+        <button type="button" data-mode="any" aria-pressed="false">Biri olsun</button>
+      </div>
+      <p class="hint">Malzemeye bir kez dokun: içersin. İkinci kez: içermesin. Üçüncü kez: kaldır.</p>
+      <button type="button" class="linkbtn" id="reset">Filtreleri temizle</button>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <section class="panel game" id="game" aria-labelledby="gt">
+    <div>
+      <h2 id="gt">Bugün ne yesek?</h2>
+      <p class="hint" style="margin-top:6px">Öğünü seç, evde olan malzemelere dokun; sana uyan bir tarifi rastgele seçeyim. Hiçbir şey seçmezsen tüm tariflerden seçerim.</p>
+    </div>
+    <div class="row"><span class="lbl">Öğün</span><div class="seg" id="g-meal" role="group" aria-label="Öğün"></div></div>
+    <div><span class="lbl">Evimde olanlar</span><div class="chipgroups" id="g-chips" style="margin-top:8px"></div></div>
+    <div class="row">
+      <button type="button" class="cta" id="g-go">Bana yemek seç</button>
+      <button type="button" class="linkbtn" id="g-clear">Seçimi temizle</button>
+      <span class="count" id="g-count" aria-live="polite"></span>
+    </div>
+    <div id="g-result" aria-live="polite"></div>
+  </section>
+
+  <p class="foot">Kalori ve makrolar, malzemelerin genel besin değeri tablolarındaki ortalama değerleriyle hesaplandı. Marka, pişirme yöntemi ve porsiyon farkına göre yaklaşık ±%10 sapabilir. Porsiyon gramajı pişirme öncesi malzeme ağırlığına göre verilir. Snack'lerde protein hedefi olmadığı için yıldız verilmedi. Skyr yerine protein quark yazıldı; bulamazsan skyr veya süzme yoğurt da olur, değerler kabaca aynı kalır. Tatlandırıcı gereken yerde stevia kullanıldı. Sondaki illüstrasyonlar malzemelere göre üretilmiş stilize çizimlerdir, gerçek yemek fotoğrafı değildir.</p>
+</div>
+
+<script>
+const DATA = /*DATA*/null;
+
+const SECTIONS = [
+  { id: "all", label: "Hepsi" },
+  { id: "kahvalti", label: "Kahvaltı" },
+  { id: "aksam", label: "Akşam yemeği" },
+  { id: "snack", label: "Snack" },
+  { id: "rice-nori", label: "Rice paper ve nori" }
+];
+const SECTION_LABEL = { "kahvalti": "Kahvaltı", "aksam": "Akşam yemeği", "snack": "Snack", "rice-nori": "Rice paper ve nori" };
+
+const state = { section: "all", servings: 3, override: {}, inc: new Set(), exc: new Set(), mode: "all", q: "", starOnly: false, open: new Set() };
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const norm = (s) => String(s).toLocaleLowerCase("tr").replace(/ı/g, "i").replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/̇/g, "");
+const nf = (n, d) => n.toLocaleString("tr-TR", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+
+/* ---- miktar ölçekleme ---- */
+const FR = { 0.25: "¼", 0.5: "½", 0.75: "¾" };
+function fracText(x) {
+  const whole = Math.floor(x + 1e-9);
+  const f = Math.round((x - whole) * 100) / 100;
+  if (!f) return String(whole);
+  return (whole ? String(whole) : "") + (FR[f] || "");
+}
+function scaleQty(q, unit, n) {
+  if (!q) return "";
+  const v = (q * n) / DATA.base;
+  if (unit === "g" || unit === "ml") {
+    let x = v < 10 ? Math.max(1, Math.round(v)) : v < 100 ? Math.round(v / 5) * 5 : Math.round(v / 10) * 10;
+    if (x >= 1000) {
+      const big = Math.round((x / 1000) * 100) / 100;
+      return nf(big, big % 1 ? 1 : 0) + (unit === "g" ? " kg" : " L");
+    }
+    return x + " " + unit;
+  }
+  if (unit === "yk" || unit === "tt") return fracText(Math.max(0.25, Math.round(v * 4) / 4)) + " " + unit;
+  if (unit === "diş") return fracText(Math.max(1, Math.round(v))) + " diş";
+  const x = Math.max(0.5, Math.round(v * 2) / 2);
+  const label = unit === "adet" ? "" : " " + unit;
+  return fracText(x) + label;
+}
+function lcFirst(s) { return s.charAt(0).toLocaleLowerCase("tr") + s.slice(1); }
+function ingLine(i, n) {
+  if (!i.q) return { q: "", t: i.name };
+  const q = scaleQty(i.q, i.u, n);
+  if (i.k === "limon") return { q: q, t: "limonun suyu" + (i.note ? ", " + i.note : "") };
+  let name = lcFirst(i.name);
+  if (i.note) name += i.k === "baharat" ? ": " + i.note : ", " + i.note;
+  return { q: q, t: name };
+}
+function servFor(r) { return state.override[r.id] || state.servings; }
+
+/* ---- filtre ---- */
+function textTokens() { return norm(state.q).split(/\s+/).filter(Boolean); }
+function matches(r) {
+  if (state.section !== "all" && r.section !== state.section) return false;
+  if (state.starOnly && !r.star) return false;
+  for (const g of state.exc) if (r.grps.includes(g)) return false;
+  if (state.inc.size) {
+    const hits = [...state.inc].map((g) => r.grps.includes(g));
+    if (state.mode === "all" ? !hits.every(Boolean) : !hits.some(Boolean)) return false;
+  }
+  const toks = textTokens();
+  for (const t of toks) if (!r.search.includes(t)) return false;
+  return true;
+}
+function isHit(i) {
+  if (i.grp && state.inc.has(i.grp)) return true;
+  const t = norm(i.name + " " + (i.note || ""));
+  return textTokens().some((tok) => t.includes(tok));
+}
+
+
+/* ---- illüstrasyon: malzemelere göre stilize tabak ---- */
+function hashId(str) { let h = 2166136261; for (const c of String(str)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return (h >>> 0) || 1; }
+const PRIO = ["poultry", "meat", "fish", "shrimp", "egg", "rice", "potato", "bread", "ricepaper", "nori", "legume", "dairy", "eggplant", "tomato", "mushroom", "green", "carrot", "cuc", "fruit", "choc", "lemon"];
+const PROTEIN = ["poultry", "meat", "fish", "shrimp", "egg"];
+const BG = { kahvalti: "#EFE3C8", aksam: "#DCE5D1", "rice-nori": "#D2E3DE", snack: "#F0DAD5" };
+function dot(x, y, rr, f, st) { return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + rr.toFixed(1) + '" fill="' + f + '"' + (st ? ' stroke="' + st + '" stroke-width="1.2"' : "") + "/>"; }
+function ell(x, y, rx, ry, rot, f, st) { return '<ellipse cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '" transform="rotate(' + Math.round(rot) + " " + x.toFixed(1) + " " + y.toFixed(1) + ')" fill="' + f + '"' + (st ? ' stroke="' + st + '" stroke-width="1.2"' : "") + "/>"; }
+function rrect(x, y, w, h, rot, f, st, rx) { return '<rect x="' + (x - w / 2).toFixed(1) + '" y="' + (y - h / 2).toFixed(1) + '" width="' + w + '" height="' + h + '" rx="' + (rx || 4) + '" transform="rotate(' + Math.round(rot) + " " + x.toFixed(1) + " " + y.toFixed(1) + ')" fill="' + f + '"' + (st ? ' stroke="' + st + '" stroke-width="1.2"' : "") + "/>"; }
+const DRAW = {
+  rice: (x, y, r) => ell(x, y, 5.5, 2.6, r() * 180, "#fffdf4", "#e7e0cb"),
+  potato: (x, y, r) => rrect(x, y, 15 + r() * 5, 13 + r() * 4, r() * 90, "#e8c46f", "#c99a3e", 4),
+  bread: (x, y, r) => rrect(x, y, 34, 24, r() * 50 - 25, "#dfae6f", "#b98544", 7) + rrect(x, y, 26, 16, 0, "#f2dcae", "", 5),
+  ricepaper: (x, y, r) => dot(x, y, 25, "rgba(255,255,255,.62)", "#cfe0da") + '<path d="M' + (x - 14) + " " + y + " Q" + x + " " + (y - 9) + " " + (x + 14) + " " + y + '" stroke="#d6e4df" fill="none"/>',
+  legume: (x, y, r) => ell(x, y, 5.4, 4.3, r() * 180, "#d2ab6b", "#b58a4c"),
+  poultry: (x, y, r) => { const a = r() * 60 - 30; return rrect(x, y, 32, 15, a, "#dba55b", "#b27b39", 7) + rrect(x, y - 2, 18, 2, a, "#a86f2e", "", 1) + rrect(x, y + 3, 18, 2, a, "#a86f2e", "", 1); },
+  meat: (x, y, r) => ell(x, y, 17, 11.5, r() * 180, "#8c5b45", "#5f3a2b") + ell(x - 2, y - 2, 9, 5, 0, "#a77259", ""),
+  fish: (x, y, r) => { const a = r() * 40 - 20; return ell(x, y, 29, 11.5, a, "#e79480", "#c56d57") + ell(x, y, 21, 2, a, "#f6c9b9", "") + ell(x + 2, y + 5, 15, 1.6, a, "#f6c9b9", ""); },
+  shrimp: (x, y, r) => { const a = r() * 360; return '<path d="M' + (x - 11) + " " + y + " q10 -17 22 0\" stroke=\"#ee9a6c\" stroke-width=\"8\" stroke-linecap=\"round\" fill=\"none\" transform=\"rotate(" + Math.round(a) + " " + x.toFixed(1) + " " + y.toFixed(1) + ')"/>'; },
+  egg: (x, y, r) => ell(x, y, 22, 16, r() * 40, "#fffaf0", "#e8dfc9") + dot(x + 1, y, 8.5, "#f2b93b", "#d9972a"),
+  dairy: (x, y, r) => dot(x + 2, y + 3, 15, "#00000014") + dot(x, y, 15, "#ffffff", "#cdc5ad") + '<path d="M' + (x - 7) + " " + y + " q7 -9 14 0 q-7 7 -14 0\" stroke=\"#d9d1ba\" stroke-width=\"1.4\" fill=\"none\"/>",
+  tomato: (x, y, r) => dot(x, y, 8.5, "#d8523e", "#b13826") + dot(x - 2.5, y - 2.5, 2.2, "#f08b78"),
+  green: (x, y, r) => ell(x, y, 14, 5.4, r() * 180, ["#5f9467", "#7fb275", "#9cc57d"][Math.floor(r() * 3)], "#4a7a50"),
+  cuc: (x, y, r) => dot(x, y, 8, "#b5d397", "#76a45c") + dot(x, y, 4.2, "#dcedc8"),
+  eggplant: (x, y, r) => ell(x, y, 12, 8, r() * 180, "#6c4879", "#4a2f57") + ell(x, y, 6, 3, 0, "#e3d6bd", ""),
+  carrot: (x, y, r) => dot(x, y, 6, "#f08a3a", "#cf6a1c") + dot(x, y, 2, "#f9b66f"),
+  mushroom: (x, y, r) => ell(x, y, 12, 7.5, r() * 180, "#dac4a3", "#b3946a") + ell(x, y, 5, 2.4, 0, "#f1e4cb", ""),
+  fruit: (x, y, r) => dot(x, y, 7.2, r() > 0.35 ? "#c63f58" : "#6c4ba0", "#a02c43") + dot(x - 2, y - 2, 1.8, "#ffffff55"),
+  choc: (x, y, r) => rrect(x, y, 13, 13, r() * 90, "#4d3023", "#321f16", 2),
+  lemon: (x, y, r) => '<path d="M' + (x - 11) + " " + y + " a11 11 0 0 1 22 0 z\" fill=\"#f4d64c\" stroke=\"#d5b22a\" stroke-width=\"1.2\" transform=\"rotate(" + Math.round(r() * 360) + " " + x.toFixed(1) + " " + y.toFixed(1) + ')"/>',
+  nori: (x, y, r) => rrect(x, y, 40, 21, r() * 60 - 30, "#25483a", "#16302a", 3)
+};
+const COUNT = { rice: 26, potato: 7, bread: 2, ricepaper: 2, legume: 14, poultry: 4, meat: 4, fish: 3, shrimp: 5, egg: 2, dairy: 1, tomato: 6, green: 9, cuc: 7, eggplant: 4, carrot: 7, mushroom: 4, fruit: 9, choc: 3, lemon: 2, nori: 3 };
+function picSVG(rec) {
+  let seed = hashId(rec.id);
+  const rnd = () => { seed = (seed * 48271) % 2147483647; return seed / 2147483647; };
+  const vis = rec.vis || [];
+  const bowl = !vis.some((v) => PROTEIN.concat(["rice", "potato", "bread", "ricepaper", "nori"]).includes(v)) && vis.some((v) => ["dairy", "fruit", "choc"].includes(v));
+  const comps = PRIO.filter((v) => vis.includes(v)).slice(0, bowl ? 3 : 6);
+  const cx = 240, cy = 120;
+  let o = '<rect width="480" height="240" fill="' + (BG[rec.section] || "#E6ECE2") + '"/>';
+  o += '<ellipse cx="246" cy="130" rx="108" ry="104" fill="#000" opacity=".10"/>';
+  if (bowl) {
+    const fill = vis.includes("choc") && !vis.includes("dairy") ? "#6a483a" : vis.includes("dairy") ? "#fffaf0" : "#f7d6da";
+    o += dot(cx, cy, 98, "#f9f7f1", "#d8d3c4") + dot(cx, cy, 82, fill, "#e6e0cf");
+    o += '<path d="M' + (cx - 40) + " " + (cy - 8) + " q20 -26 40 -4 q20 22 40 -4\" stroke=\"#00000012\" stroke-width=\"7\" fill=\"none\" stroke-linecap=\"round\"/>";
+  } else {
+    o += dot(cx, cy, 104, "#fbf8f0", "#d9d4c4") + dot(cx, cy, 88, "#f2eee2", "#e4dfcd");
+  }
+  const n = Math.max(1, comps.length), start = rnd() * 6.283, w = 6.283 / n, maxR = bowl ? 66 : 74;
+  comps.forEach((tag, i) => {
+    const a0 = start + i * w, k = Math.max(tag === "dairy" || tag === "ricepaper" ? 1 : 2, Math.round(COUNT[tag] * Math.min(1.5, 3.2 / n)));
+    const rev = tag === "dairy" ? 0.55 : 1;
+    for (let j = 0; j < k; j++) {
+      const ang = a0 + (0.12 + rnd() * 0.76) * w, rad = (tag === "dairy" || tag === "ricepaper" ? 20 + rnd() * 18 : 24 + rnd() * (maxR - 24)) * rev + (tag === "dairy" ? 8 : 0);
+      o += DRAW[tag](cx + Math.cos(ang) * rad, cy + Math.sin(ang) * rad * 0.97, rnd);
+    }
+  });
+  if (vis.includes("lemon") && !comps.includes("lemon")) o += DRAW.lemon(cx + 88, cy - 70, rnd);
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 240" role="img" aria-label="' + esc(rec.title) + ' için stilize yemek çizimi">' + o + "</svg>";
+}
+
+/* ---- çizim ---- */
+function macroBar(s) {
+  const e = { p: s.p * 4, c: s.c * 4, f: s.f * 9 };
+  const tot = e.p + e.c + e.f || 1;
+  const pc = (x) => (x / tot * 100).toFixed(1);
+  return '<div class="bar" role="img" aria-label="Enerji payı: protein %' + Math.round(e.p / tot * 100) + ", karbonhidrat %" + Math.round(e.c / tot * 100) + ", yağ %" + Math.round(e.f / tot * 100) + '">' +
+    '<span style="width:' + pc(e.p) + '%;background:var(--m-protein)"></span>' +
+    '<span style="width:' + pc(e.c) + '%;background:var(--m-carb)"></span>' +
+    '<span style="width:' + pc(e.f) + '%;background:var(--m-fat)"></span></div>';
+}
+function cardHTML(r) {
+  const s = r.s, open = state.open.has(r.id), n = servFor(r);
+  const tags = '<span class="tag">' + esc(SECTION_LABEL[r.section]) + "</span>" + (r.kind ? '<span class="tag">' + esc(r.kind) + "</span>" : "");
+  const badge = r.star ? '<span class="badge" title="Her 11 kcal için en az 1 g protein"><span aria-hidden="true">★</span> Oran tuttu</span>' : "";
+  const ratio = r.section === "snack"
+    ? '<p class="ratio">Snack: protein hedefi yok, kalori düşük tutuldu.</p>'
+    : '<p class="ratio"><b class="num">' + nf(s.ratio, 1) + "</b> kcal / 1 g protein" + (r.star ? " · hedef en fazla 11" : "") + "</p>";
+  let h = '<article class="card' + (open ? " open" : "") + '" data-id="' + r.id + '">' +
+    '<div class="card-top"><div class="tags">' + tags + "</div>" + badge + "</div>" +
+    '<div class="pic">' + picSVG(r) + "</div>" +
+    "<div><h3>" + esc(r.title) + '</h3><p class="meta">' + esc(r.time) + '<span class="cui">' + esc(r.cuisine) + "</span></p></div>" +
+    '<div class="macros">' +
+      '<div class="macro"><b class="num">' + Math.round(s.kcal) + "<i>kcal</i></b><span>Kalori</span></div>" +
+      '<div class="macro"><b class="num">' + nf(s.p, 0) + "<i>g</i></b><span><i class=\"dot\" style=\"background:var(--m-protein)\"></i>Protein</span></div>" +
+      '<div class="macro"><b class="num">' + nf(s.c, 0) + "<i>g</i></b><span><i class=\"dot\" style=\"background:var(--m-carb)\"></i>Karbonhidrat</span></div>" +
+      '<div class="macro"><b class="num">' + nf(s.f, 0) + "<i>g</i></b><span><i class=\"dot\" style=\"background:var(--m-fat)\"></i>Yağ</span></div>" +
+    "</div>" + macroBar(s) + ratio +
+    '<p class="portion"><b>Önerilen porsiyon:</b> ' + esc(r.portion) + " · yaklaşık " + Math.round(s.g / 10) * 10 + " g</p>";
+  if (open) {
+    const lines = r.ing.map((i) => {
+      const l = ingLine(i, n);
+      return '<li' + (isHit(i) ? ' class="hit"' : "") + '><span class="q">' + esc(l.q) + "</span><span>" + esc(l.t) + "</span></li>";
+    }).join("");
+    h += '<div class="detail"><div><h4>Malzemeler</h4>' +
+      '<div class="servbar"><span class="lbl">Bu tarif için</span><div class="stepper" role="group" aria-label="Bu tarifin kişi sayısı">' +
+      '<button type="button" data-act="minus" aria-label="Kişi sayısını azalt">−</button><output class="num">' + n + '</output><button type="button" data-act="plus" aria-label="Kişi sayısını artır">+</button></div><span class="lbl">kişilik</span></div>' +
+      '<ul class="ing">' + lines + "</ul></div>" +
+      "<div><h4>Yapılışı</h4><ol class=\"steps\">" + r.steps.map((x) => "<li>" + esc(x) + "</li>").join("") + "</ol>" +
+      '<div class="notes"><p class="note"><b>Ortak sofra</b>' + esc(r.family) + '</p><p class="note"><b>Bulamazsan</b>' + esc(r.swap) + "</p>" + (r.store ? '<p class="note"><b>Saklama</b>' + esc(r.store) + "</p>" : "") + "</div></div></div>";
+  }
+  h += '<button type="button" class="open-btn" data-act="toggle" aria-expanded="' + open + '">' + (open ? "Tarifi kapat" : "Tarifi aç") + "</button></article>";
+  return h;
+}
+function renderTabs() {
+  $("#tabs").innerHTML = SECTIONS.map((s) => {
+    const c = s.id === "all" ? DATA.recipes.length : DATA.recipes.filter((r) => r.section === s.id).length;
+    return '<button type="button" class="tab" data-sec="' + s.id + '" aria-pressed="' + (state.section === s.id) + '">' + s.label + "<small class=\"num\">" + c + "</small></button>";
+  }).join("");
+}
+function renderChips() {
+  $("#chipgroups").innerHTML = DATA.chipGroups.map((g) =>
+    '<div class="chipgroup"><span class="lbl">' + esc(g.label) + '</span><div class="chips">' +
+    g.chips.map((c) => '<button type="button" class="chip" data-grp="' + esc(c.grp) + '" data-s="' + (state.inc.has(c.grp) ? "in" : state.exc.has(c.grp) ? "out" : "off") + '" aria-pressed="' + (state.inc.has(c.grp) || state.exc.has(c.grp)) + '">' + esc(c.grp) + " <span class=\"num\">" + c.n + "</span></button>").join("") +
+    "</div></div>").join("");
+}
+function render() {
+  const list = DATA.recipes.filter(matches);
+  $("#count").textContent = list.length + " tarif gösteriliyor";
+  $("#grid").innerHTML = list.length ? list.map(cardHTML).join("") :
+    '<div class="empty" style="grid-column:1/-1"><h3>Bu filtreyle tarif yok</h3><p class="meta">Bir malzemeyi kaldırmayı veya "Biri olsun" seçeneğini denemeyi dene.</p><button type="button" class="linkbtn" data-act="reset">Filtreleri temizle</button></div>';
+  renderTabs(); renderChips();
+  $("#g-val").textContent = state.servings;
+  document.querySelectorAll("#mode button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === state.mode)));
+}
+function resetFilters() {
+  state.section = "all"; state.inc.clear(); state.exc.clear(); state.q = ""; state.starOnly = false; state.mode = "all";
+  $("#q").value = ""; $("#starOnly").checked = false; render();
+}
+
+
+/* ---- rastgele yemek oyunu ---- */
+const MEALS = [["any", "Fark etmez"], ["kahvalti", "Kahvaltı"], ["aksam", "Akşam yemeği"], ["rice-nori", "Rice paper ve nori"], ["snack", "Snack"]];
+const game = { meal: "any", own: new Set(), last: null, timer: null };
+function renderGame() {
+  $("#g-meal").innerHTML = MEALS.map((m) => '<button type="button" data-meal="' + m[0] + '" aria-pressed="' + (game.meal === m[0]) + '">' + m[1] + "</button>").join("");
+  $("#g-chips").innerHTML = DATA.chipGroups.map((g) =>
+    '<div class="chipgroup"><span class="lbl">' + esc(g.label) + '</span><div class="chips">' +
+    g.chips.map((c) => '<button type="button" class="chip" data-ggrp="' + esc(c.grp) + '" data-s="' + (game.own.has(c.grp) ? "in" : "off") + '" aria-pressed="' + game.own.has(c.grp) + '">' + esc(c.grp) + "</button>").join("") + "</div></div>").join("");
+  const p = gamePool();
+  $("#g-count").textContent = p.list.length + " tarif havuzda" + (p.miss ? " (" + p.miss + " eksik malzemeyle)" : "");
+}
+function gamePool() {
+  const pool = DATA.recipes.filter((r) => game.meal === "any" || r.section === game.meal);
+  if (!game.own.size) return { list: pool.map((r) => ({ r: r, miss: [] })), miss: 0 };
+  const sc = pool.map((r) => ({ r: r, miss: r.grps.filter((g) => !game.own.has(g)), hit: r.grps.filter((g) => game.own.has(g)).length })).filter((x) => x.hit > 0);
+  for (let m = 0; m <= 3; m++) {
+    const l = sc.filter((x) => x.miss.length === m);
+    if (l.length) return { list: l, miss: m };
+  }
+  return { list: [], miss: 0 };
+}
+function resultHTML(x, rolling) {
+  const r = x.r, s = r.s;
+  return '<div class="pic">' + picSVG(r) + "</div><div>" +
+    '<div class="tags"><span class="tag">' + esc(SECTION_LABEL[r.section]) + "</span>" + (r.kind ? '<span class="tag">' + esc(r.kind) + "</span>" : "") + "</div>" +
+    "<h3>" + esc(r.title) + '</h3><p class="meta">' + Math.round(s.kcal) + " kcal · " + nf(s.p, 0) + " g protein · " + esc(r.time) + '<span class="cui">' + esc(r.cuisine) + "</span></p>" +
+    (rolling ? "" : (x.miss.length ? '<p class="miss">Eksik: ' + esc(x.miss.join(", ")) + "</p>" : (game.own.size ? '<p class="ok">Evdeki malzemelerle yapılır</p>' : "")) +
+    '<div class="acts"><button type="button" class="open-btn" data-gact="open">Tarifi göster</button><button type="button" class="linkbtn" data-gact="again">Başka tarif</button></div>') + "</div>";
+}
+function rollGame() {
+  const p = gamePool();
+  const box = $("#g-result");
+  if (!p.list.length) { box.innerHTML = '<p class="hint">Bu seçimle uyan tarif çıkmadı. Bir iki malzeme daha ekleyip tekrar dene.</p>'; return; }
+  const others = p.list.length > 1 ? p.list.filter((x) => x.r.id !== game.last) : p.list;
+  const pick = others[Math.floor(Math.random() * others.length)];
+  game.last = pick.r.id; game.pick = pick;
+  clearInterval(game.timer);
+  const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finish = () => { box.innerHTML = '<div class="game-result">' + resultHTML(pick, false) + "</div>"; $("#g-go").disabled = false; };
+  if (calm) { finish(); return; }
+  $("#g-go").disabled = true;
+  let i = 0;
+  game.timer = setInterval(() => {
+    const x = p.list[Math.floor(Math.random() * p.list.length)];
+    box.innerHTML = '<div class="game-result rolling">' + resultHTML(x, true) + "</div>";
+    if (++i >= 12) { clearInterval(game.timer); finish(); }
+  }, 80);
+}
+function openRecipe(id) {
+  state.section = "all"; state.inc.clear(); state.exc.clear(); state.q = ""; state.starOnly = false; state.mode = "all";
+  $("#q").value = ""; $("#starOnly").checked = false;
+  state.open.add(id); render();
+  const el = document.querySelector('.card[data-id="' + id + '"]');
+  if (el) el.scrollIntoView({ block: "start", behavior: "smooth" });
+}
+
+/* ---- olaylar ---- */
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button");
+  if (!t) return;
+  if (t.dataset.meal) { game.meal = t.dataset.meal; renderGame(); return; }
+  if (t.dataset.ggrp) { const g = t.dataset.ggrp; game.own.has(g) ? game.own.delete(g) : game.own.add(g); renderGame(); return; }
+  if (t.id === "g-go" || t.dataset.gact === "again") { rollGame(); return; }
+  if (t.id === "g-clear") { game.own.clear(); game.meal = "any"; renderGame(); $("#g-result").innerHTML = ""; return; }
+  if (t.dataset.gact === "open") { if (game.pick) openRecipe(game.pick.r.id); return; }
+  if (t.dataset.sec) { state.section = t.dataset.sec; render(); return; }
+  if (t.dataset.grp) {
+    const g = t.dataset.grp;
+    if (state.inc.has(g)) { state.inc.delete(g); state.exc.add(g); }
+    else if (state.exc.has(g)) { state.exc.delete(g); }
+    else state.inc.add(g);
+    render(); return;
+  }
+  if (t.dataset.mode) { state.mode = t.dataset.mode; render(); return; }
+  if (t.id === "g-minus" || t.id === "g-plus") {
+    state.servings = Math.min(12, Math.max(1, state.servings + (t.id === "g-plus" ? 1 : -1)));
+    state.override = {}; render(); return;
+  }
+  if (t.id === "reset" || t.dataset.act === "reset") { resetFilters(); return; }
+  const card = t.closest(".card");
+  if (!card) return;
+  const id = card.dataset.id, act = t.dataset.act;
+  if (act === "toggle") { state.open.has(id) ? state.open.delete(id) : state.open.add(id); render(); const el = document.querySelector('.card[data-id="' + id + '"]'); if (el) el.scrollIntoView({ block: "nearest" }); }
+  if (act === "plus" || act === "minus") {
+    const r = DATA.recipes.find((x) => x.id === id);
+    state.override[id] = Math.min(12, Math.max(1, servFor(r) + (act === "plus" ? 1 : -1)));
+    render();
+  }
+});
+$("#q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
+$("#starOnly").addEventListener("change", (e) => { state.starOnly = e.target.checked; render(); });
+
+(function init() {
+  const mains = DATA.recipes.filter((r) => r.section !== "snack");
+  const stars = mains.filter((r) => r.star).length;
+  $("#legend").innerHTML =
+    '<span><b class="star">★</b> Her 10 kcal için yaklaşık 1 g protein (en fazla 11 kcal/g): <b>' + stars + " / " + mains.length + " ana tarif</b></span>" +
+    '<span><i class="dot" style="background:var(--m-protein)"></i>Protein</span><span><i class="dot" style="background:var(--m-carb)"></i>Karbonhidrat</span><span><i class="dot" style="background:var(--m-fat)"></i>Yağ</span><span>Değerler porsiyon başına, çubuk enerji payını gösterir</span>';
+  render();
+  renderGame();
+})();
+</script>

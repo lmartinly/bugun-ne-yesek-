@@ -1,0 +1,2 @@
+# Sadece tools/smoke_test.py için (tarayıcı testi). Sayfayı üretmek için hiçbir paket gerekmez.
+playwright>=1.40
