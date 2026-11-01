@@ -1,0 +1,17 @@
+{
+  "name": "2027 Aile Tarif Rehberi",
+  "short_name": "Tarif Rehberi",
+  "description": "Yüksek protein, düşük kalorili 112 aile tarifi",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F1F4EE",
+  "theme_color": "#1E6A54",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -16,12 +16,14 @@ Yüksek protein, düşük kalorili, tüm ailenin birlikte yiyebileceği **112 ta
 - **★ yıldız:** Kalori / protein oranı en fazla 11 kcal/g olan ana tariflere verilir (hedef: 10 kcal ≈ 1 g protein). Snack'lerde protein hedefi yoktur, yıldız verilmez.
 - **Malzemeye göre filtre:** Bir malzemeye dokununca içersin, ikinci dokunuşta içermesin, üçüncüde kalksın. "Hepsi olsun / Biri olsun" ve serbest metin arama var.
 - **İllüstrasyon:** Her tarifin malzemelerine göre üretilen stilize tabak çizimi (fotoğraf değildir).
+- **Telefonda uygulama gibi:** iPhone'da Safari'de Paylaş → "Ana Ekrana Ekle" ile tam ekran açılır (manifest, ikon ve çevrimdışı önbellek dahil). Yazı boyutları telefon için büyütüldü.
 - **Bugün ne yesek?:** Sayfanın sonunda; öğünü ve evdeki malzemeleri seçince uygun bir tarifi rastgele seçer.
 
 ## Klasör yapısı
 
 ```
 index.html          Üretilmiş sayfa (GitHub Pages bunu yayınlar)
+manifest.webmanifest, sw.js, icons/   Ana ekrana eklenebilir uygulama (PWA) dosyaları
 src/
   data.py           40 tarif: malzeme besin tablosu (DB) + tarifler (R). Makrolar buradan hesaplanır
   compute.py        Makro ve oran hesabı, yıldız kuralı
